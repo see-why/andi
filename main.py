@@ -30,7 +30,7 @@ def generate_content_with_retry(prompt, max_retries=3, delay=2):
                 raise Exception(f"Failed after {max_retries} attempts: {str(e)}")
 
 try:
-    prompt = sys.argv[1:]
+    prompt = ' '.join(sys.argv[1:])
 
     if not prompt:
         print("Prompt not provided!.")
