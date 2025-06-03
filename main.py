@@ -31,6 +31,11 @@ def generate_content_with_retry(prompt, max_retries=3, delay=2):
 
 try:
     prompt = sys.argv[1:]
+
+    if not prompt:
+        print("Prompt not provided!.")
+        exit(1)
+
     response = generate_content_with_retry(prompt)
     
     print(response.text)
