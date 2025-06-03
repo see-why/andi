@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 from dotenv import load_dotenv
 from google import genai
@@ -29,7 +30,7 @@ def generate_content_with_retry(prompt, max_retries=3, delay=2):
                 raise Exception(f"Failed after {max_retries} attempts: {str(e)}")
 
 try:
-    prompt = "Why is Boot.dev such a great place to learn backend development? Use one paragraph maximum."
+    prompt = sys.argv[1:]
     response = generate_content_with_retry(prompt)
     
     print(response.text)
