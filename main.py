@@ -13,13 +13,17 @@ if not api_key:
 
 client = genai.Client(api_key=api_key)
 
-def generate_content_with_retry(prompt, max_retries=3, delay=2):
+def generate_content_with_retry(messages, max_retries=3, delay=2, verbose=False):
     for attempt in range(max_retries):
         try:
             response = client.models.generate_content(
                 model='gemini-2.0-flash-001',
-                contents=prompt
+                contents=messages
             )
+            if verbose:
+                print(f"Working on: {prompt}")
+                print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
+                print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
             return response
         except ServerError as e:
             if attempt < max_retries - 1:
@@ -30,16 +34,26 @@ def generate_content_with_retry(prompt, max_retries=3, delay=2):
                 raise Exception(f"Failed after {max_retries} attempts: {str(e)}")
 
 try:
-    prompt = ' '.join(sys.argv[1:])
+    args = sys.argv[1:]
+    
+    # Check for --verbose flag
+    be_verbose = False
+    if '--verbose' in args:
+        be_verbose = True
+        args.remove('--verbose')
+    
+    prompt = ' '.join(args)
 
     if not prompt:
-        print("Prompt not provided!.")
+        print("Prompt not provided!")
         exit(1)
-
-    response = generate_content_with_retry(prompt)
     
+    messages = [
+        genai.types.Content(role="user", parts=[genai.types.Part(text=prompt)]),
+    ]
+
+    response = generate_content_with_retry(messages, verbose=be_verbose)
+
     print(response.text)
-    print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
-    print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
 except Exception as e:
     print(f"Error: {str(e)}")
