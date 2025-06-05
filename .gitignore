@@ -1,3 +1,5 @@
 .env
 calculator/pkg/__pycache__/calculator.cpython-313.pyc
 calculator/pkg/__pycache__/render.cpython-313.pyc
+calculator/calculator/pkg/__pycache__/calculator.cpython-313.pyc
+calculator/calculator/pkg/__pycache__/render.cpython-313.pyc
