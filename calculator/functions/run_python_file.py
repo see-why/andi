@@ -10,7 +10,7 @@ def run_python_file(working_directory, file_path):
 
         # Check if target file is outside working directory
         if not target_file_abs.startswith(working_dir_abs):
-            return f'Error: Cannot run "{file_path}" as it is outside the permitted working directory'
+            return f'Error: Cannot execute "{file_path}" as it is outside the permitted working directory'
 
         # Check if file exists
         if not os.path.exists(target_file_abs):
