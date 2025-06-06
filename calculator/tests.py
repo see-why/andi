@@ -2,6 +2,7 @@ from functions.get_file_content import get_file_content
 import unittest
 from functions.write_file import write_file
 from functions.delete_file import delete_file
+from functions.run_python_file import run_python_file
 
 class TestGetFileContent(unittest.TestCase):
 
@@ -46,6 +47,33 @@ class TestWriteFile(unittest.TestCase):
 
     def test_write_outside_working_dir(self):
         result = write_file("calculator", "/tmp/temp.txt", "this should not be allowed")
+        print(result)
+        self.assertIsInstance(result, str)
+        self.assertTrue(result.startswith("Error:"))
+
+class TestRunPythonFile(unittest.TestCase):
+    def test_run_main_py(self):
+        result = run_python_file("calculator", "main.py")
+        print("\nTest running main.py:")
+        print(result)
+        self.assertIsInstance(result, str)
+
+    def test_run_tests_py(self):
+        result = run_python_file("calculator", "tests.py")
+        print("\nTest running tests.py:")
+        print(result)
+        self.assertIsInstance(result, str)
+
+    def test_run_outside_working_dir(self):
+        result = run_python_file("calculator", "../main.py")
+        print("\nTest running file outside working directory:")
+        print(result)
+        self.assertIsInstance(result, str)
+        self.assertTrue(result.startswith("Error:"))
+
+    def test_run_nonexistent_file(self):
+        result = run_python_file("calculator", "nonexistent.py")
+        print("\nTest running nonexistent file:")
         print(result)
         self.assertIsInstance(result, str)
         self.assertTrue(result.startswith("Error:"))
