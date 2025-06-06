@@ -1,12 +1,22 @@
 from functions.get_file_content import get_file_content
 
-def run_tests():
-    print("Test 1: Reading main.py")
-    print(get_file_content("calculator", "main.py"))
-    print("\nTest 2: Reading pkg/calculator.py")
-    print(get_file_content("calculator", "pkg/calculator.py"))
-    print("\nTest 3: Attempting to read /bin/cat (should fail)")
-    print(get_file_content("calculator", "/bin/cat"))
+import unittest
+
+class TestGetFileContent(unittest.TestCase):
+
+    def test_read_main_py(self):
+        result = get_file_content("calculator", "main.py")
+        self.assertIsInstance(result, str)  # Assuming the function returns a string
+        self.assertTrue(len(result) > 0)   # Ensure the content is not empty
+
+    def test_read_pkg_calculator_py(self):
+        result = get_file_content("calculator", "pkg/calculator.py")
+        self.assertIsInstance(result, str)
+        self.assertTrue(len(result) > 0)
+
+    def test_read_invalid_file(self):
+        with self.assertRaises(FileNotFoundError):  # Assuming the function raises this error
+            get_file_content("calculator", "/bin/cat")
 
 if __name__ == "__main__":
-    run_tests()
+    unittest.main()
