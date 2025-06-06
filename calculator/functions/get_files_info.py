@@ -11,7 +11,7 @@ def get_files_info(working_directory, directory=None):
             target_dir_abs = working_dir_abs
 
         # Check if target directory is outside working directory
-        if not target_dir_abs.startswith(working_dir_abs):
+        if os.path.commonpath([working_dir_abs, target_dir_abs]) != working_dir_abs:
             return f'Error: Cannot list "{directory}" as it is outside the permitted working directory'
 
         # Check if path exists and is a directory
