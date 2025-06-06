@@ -1,6 +1,6 @@
-# Calculator Project
+# Andi modifies a calculator
 
-A Python-based calculator project with a focus on security and controlled file operations.
+A Python-based LLM project with a focus on file changes and running python scripts.
 
 ## Project Structure
 
