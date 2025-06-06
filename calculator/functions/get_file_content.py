@@ -13,7 +13,7 @@ def get_file_content(working_directory, file_path):
 
         # Check if path exists and is a file
         if not os.path.exists(target_file_abs):
-            return f'Error: File not found or is not a regular file: "{file_path}"'
+            return f'Error: File not found: "{file_path}"'
         if not os.path.isfile(target_file_abs):
             return f'Error: File not found or is not a regular file: "{file_path}"'
 
