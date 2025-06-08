@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 from google.genai.errors import ServerError
+from functions.call_function import call_function
 
 load_dotenv()
 api_key = os.environ.get("GEMINI_API_KEY")
@@ -145,8 +146,12 @@ try:
     # Check for function calls
     if response.candidates and response.candidates[0].content.parts:
         for part in response.candidates[0].content.parts:
-            if hasattr(part, 'function_call'):
-                print(f"Calling function: {part.function_call.name}({part.function_call.args})")
+            if hasattr(part, 'function_call') and part.function_call is not None:
+                function_call_result = call_function(part.function_call, verbose=be_verbose)
+                if not hasattr(function_call_result.parts[0], 'function_response'):
+                    raise Exception("Invalid function response format")
+                if be_verbose:
+                    print(f"-> {function_call_result.parts[0].function_response.response}")
             else:
                 print(part.text)
     else:
