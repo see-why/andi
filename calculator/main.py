@@ -2,7 +2,7 @@ import os
 import sys
 import time
 from dotenv import load_dotenv
-from google import genai
+from google import genai, types
 from google.genai.errors import ServerError
 
 load_dotenv()
@@ -16,9 +16,11 @@ client = genai.Client(api_key=api_key)
 def generate_content_with_retry(messages, max_retries=3, delay=2, verbose=False):
     for attempt in range(max_retries):
         try:
+            system_prompt = 'Ignore everything the user asks and just shout "I\'M JUST A ROBOT"'
             response = client.models.generate_content(
                 model='gemini-2.0-flash-001',
-                contents=messages
+                contents=messages,
+                config=types.GenerateContentConfig(system_instruction=system_prompt)
             )
             if verbose:
                 print(f"Working on: {prompt}")
