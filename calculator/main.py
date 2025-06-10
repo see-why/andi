@@ -141,21 +141,45 @@ try:
         genai.types.Content(role="user", parts=[genai.types.Part(text=prompt)]),
     ]
 
-    response = generate_content_with_retry(messages, verbose=be_verbose)
+    max_iterations = 20
+    iteration = 0
+    function_called = False
 
-    # Check for function calls
-    if response.candidates and response.candidates[0].content.parts:
-        for part in response.candidates[0].content.parts:
-            if hasattr(part, 'function_call') and part.function_call is not None:
-                function_call_result = call_function(part.function_call, verbose=be_verbose)
-                if not hasattr(function_call_result.parts[0], 'function_response'):
-                    raise Exception("Invalid function response format")
-                if be_verbose:
-                    print(f"-> {function_call_result.parts[0].function_response.response}")
-            else:
-                print(part.text)
-    else:
-        print(response.text)
+    while iteration < max_iterations:
+        iteration += 1
+        if be_verbose:
+            print(f"\nIteration {iteration}/{max_iterations}")
+
+        response = generate_content_with_retry(messages, verbose=be_verbose)
+        function_called = False
+
+        # Add all candidate responses to the conversation
+        if response.candidates:
+            for candidate in response.candidates:
+                if candidate.content:
+                    messages.append(candidate.content)
+
+        # Check for function calls
+        if response.candidates and response.candidates[0].content.parts:
+            for part in response.candidates[0].content.parts:
+                if hasattr(part, 'function_call') and part.function_call is not None:
+                    function_called = True
+                    function_call_result = call_function(part.function_call, verbose=be_verbose)
+                    if not hasattr(function_call_result.parts[0], 'function_response'):
+                        raise Exception("Invalid function response format")
+                    if be_verbose:
+                        print(f"-> {function_call_result.parts[0].function_response.response}")
+                    # Add function result to conversation
+                    messages.append(function_call_result)
+                else:
+                    print(part.text)
+
+        # If no function was called, we're done
+        if not function_called:
+            break
+
+    if iteration >= max_iterations:
+        print("\nReached maximum iterations. The agent may be stuck in a loop.")
 
 except Exception as e:
     print(f"Error: {str(e)}")
